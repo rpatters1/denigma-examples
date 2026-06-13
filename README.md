@@ -11,7 +11,8 @@ The repository currently includes `examples/wasm-mnx`, which builds a WebAssembl
 wrapper around Denigma's MNX converter target, and `examples/wasm-enigmaxml`,
 which extracts Finale Enigma XML in WebAssembly, and
 `examples/text-expression-classifier`, which prints classification results for
-each text expression definition in a MUSX file using `tinyxml2` for XML parsing.
+each text expression definition in an Enigma XML file using `tinyxml2` for XML
+parsing.
 
 Denigma documentation is available at [rpatters1.github.io/denigma](https://rpatters1.github.io/denigma/).
 The source repository is [project-attacca/denigma](https://github.com/project-attacca/denigma).
@@ -68,5 +69,6 @@ node examples/wasm-enigmaxml/test/smoke.mjs \
 ```sh
 cmake -S . -B build-cli
 cmake --build build-cli --target text_expression_classifier
-build-cli/examples/text-expression-classifier/text_expression_classifier examples/wasm-mnx/test/data/sample.musx
+build-cli/examples/text-expression-classifier/text_expression_classifier \
+  examples/text-expression-classifier/test/data/exps.enigmaxml
 ```

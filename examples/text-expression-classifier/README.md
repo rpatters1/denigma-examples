@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 
 # Text Expression Classifier Example
 
-Builds a small CLI that reads a MUSX file, loads it with `musxdom`, and prints
-the classification for each `TextExpressionDef` found in the score.
+Builds a small CLI that reads an Enigma XML file, loads it with `musxdom`, and
+prints the classification for each `TextExpressionDef` found in the score.
 
 It uses `tinyxml2` as the XML DOM backend rather than PugiXML.
 
@@ -32,5 +32,5 @@ cmake --build build-cli --target text_expression_classifier
 
 ```sh
 build-cli/examples/text-expression-classifier/text_expression_classifier \
-  path/to/input.musx
+  path/to/input.enigmaxml
 ```
