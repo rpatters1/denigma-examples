@@ -10,6 +10,9 @@ Standalone examples for consuming Denigma libraries from external projects.
 The first example is `examples/wasm-mnx`, which builds a WebAssembly wrapper around
 Denigma's MNX converter target.
 
+Denigma documentation is available at [rpatters1.github.io/denigma](https://rpatters1.github.io/denigma/).
+The source repository is [project-attacca/denigma](https://github.com/project-attacca/denigma).
+
 ## Requirements
 
 - CMake 3.24 or newer
