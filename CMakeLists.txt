@@ -15,7 +15,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(DENIGMA_EXAMPLES_BUILD_WASM_MNX "Build the MNX WebAssembly example" ON)
+option(DENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML "Build the Enigma XML WebAssembly example" ON)
+option(DENIGMA_EXAMPLES_BUILD_TEXT_EXPRESSION_CLASSIFIER "Build the TextExpressionDef classification CLI example" ON)
 
 if(DENIGMA_EXAMPLES_BUILD_WASM_MNX)
     add_subdirectory(examples/wasm-mnx)
+endif()
+
+if(DENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML)
+    add_subdirectory(examples/wasm-enigmaxml)
+endif()
+
+if(DENIGMA_EXAMPLES_BUILD_TEXT_EXPRESSION_CLASSIFIER)
+    add_subdirectory(examples/text-expression-classifier)
 endif()
