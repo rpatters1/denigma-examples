@@ -1,0 +1,92 @@
+# Copyright 2026 Robert G. Patterson.
+# SPDX-License-Identifier: MIT
+
+name: Build
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  cli:
+    name: CLI ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        include:
+          - os: ubuntu-latest
+            generator: Ninja
+          - os: macos-latest
+            generator: Ninja
+          - os: windows-latest
+            generator: Ninja
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSVC
+        if: matrix.os == 'windows-latest'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Ninja on macOS
+        if: matrix.os == 'macos-latest'
+        run: brew install ninja || echo "Ninja already installed"
+
+      - name: Install Ninja on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          ninja --version && echo "Ninja already installed" || choco install ninja -y
+
+      - name: Verify Ninja Installation
+        run: ninja --version
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -S . -B build \
+            -G "${{ matrix.generator }}" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DDENIGMA_EXAMPLES_BUILD_WASM_MNX=OFF \
+            -DDENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML=OFF \
+            -DDENIGMA_EXAMPLES_BUILD_TEXT_EXPRESSION_CLASSIFIER=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --target text_expression_classifier --parallel 2
+
+  wasm:
+    name: WASM Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+
+      - name: Configure
+        run: |
+          emcmake cmake -S . -B build-wasm \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DDENIGMA_EXAMPLES_BUILD_WASM_MNX=ON \
+            -DDENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML=ON \
+            -DDENIGMA_EXAMPLES_BUILD_TEXT_EXPRESSION_CLASSIFIER=OFF
+
+      - name: Build
+        shell: bash
+        run: cmake --build build-wasm --target denigma_wasm_mnx denigma_wasm_enigmaxml --parallel 2
