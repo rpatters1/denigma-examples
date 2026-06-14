@@ -67,7 +67,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build --target text_expression_classifier --parallel
+        run: cmake --build build --target text_expression_classifier --parallel 2
 
   wasm:
     name: WASM Ubuntu
@@ -89,4 +89,4 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build-wasm --target denigma_wasm_mnx denigma_wasm_enigmaxml --parallel
+        run: cmake --build build-wasm --target denigma_wasm_mnx denigma_wasm_enigmaxml --parallel 2
