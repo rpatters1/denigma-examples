@@ -5,9 +5,18 @@ include(FetchContent)
 
 set(DENIGMA_GIT_REPOSITORY "https://github.com/rpatters1/denigma.git" CACHE STRING "Denigma git repository used by FetchContent" FORCE)
 set(DENIGMA_GIT_TAG "main" CACHE STRING "Denigma git tag, branch, or commit used by FetchContent")
+set(DENIGMA_SOURCE_DIR "" CACHE PATH "Optional local Denigma source checkout; when set, overrides FetchContent download")
 
 set(denigma_BUILD_TESTING OFF CACHE BOOL "Do not build Denigma tests from examples" FORCE)
 set(denigma_BUILD_DOCS OFF CACHE BOOL "Do not build Denigma docs from examples" FORCE)
+
+if(DENIGMA_SOURCE_DIR)
+    get_filename_component(DENIGMA_SOURCE_DIR "${DENIGMA_SOURCE_DIR}" ABSOLUTE)
+    if(NOT EXISTS "${DENIGMA_SOURCE_DIR}/CMakeLists.txt")
+        message(FATAL_ERROR "DENIGMA_SOURCE_DIR does not point to a Denigma checkout: ${DENIGMA_SOURCE_DIR}")
+    endif()
+    set(FETCHCONTENT_SOURCE_DIR_DENIGMA "${DENIGMA_SOURCE_DIR}" CACHE PATH "Local Denigma source override" FORCE)
+endif()
 
 # Disable building tests for tinyxml2
 set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "Do not build tests for tinyxml2")
