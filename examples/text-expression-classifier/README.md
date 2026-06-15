@@ -16,6 +16,7 @@ Each output line contains:
 
 The example uses CMake `FetchContent` for `tinyxml2` and Denigma. By default it
 fetches Denigma from the `main` branch of the public GitHub repository.
+Pass `-DDENIGMA_SOURCE_DIR=/path/to/denigma` to use a local checkout instead.
 
 The example defaults to C++20. Pass `-DDENIGMA_EXAMPLES_CXX_STANDARD=23` to build with a newer standard.
 
@@ -25,6 +26,13 @@ From the repository root:
 
 ```sh
 cmake -S . -B build-cli
+cmake --build build-cli --target text_expression_classifier
+```
+
+With a local Denigma checkout:
+
+```sh
+cmake -S . -B build-cli -DDENIGMA_SOURCE_DIR=/path/to/denigma
 cmake --build build-cli --target text_expression_classifier
 ```
 
