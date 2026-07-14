@@ -70,6 +70,12 @@ jobs:
         shell: bash
         run: cmake --build build --target text_expression_classifier --parallel 2
 
+      - name: Smoke test classifier
+        shell: bash
+        run: |
+          build/examples/text-expression-classifier/text_expression_classifier \
+            examples/text-expression-classifier/test/data/exps.enigmaxml
+
   wasm:
     name: WASM Ubuntu
     runs-on: ubuntu-latest
@@ -92,3 +98,21 @@ jobs:
       - name: Build
         shell: bash
         run: cmake --build build-wasm --target denigma_wasm_mnx denigma_wasm_musicxml denigma_wasm_enigmaxml --parallel 2
+
+      - name: Smoke test MNX
+        run: |
+          node examples/wasm-mnx/test/smoke.mjs \
+            build-wasm/examples/wasm-mnx/denigma_wasm_mnx.js \
+            examples/wasm-mnx/test/data/sample.musx
+
+      - name: Smoke test MusicXML
+        run: |
+          node examples/wasm-musicxml/test/smoke.mjs \
+            build-wasm/examples/wasm-musicxml/denigma_wasm_musicxml.js \
+            examples/wasm-musicxml/test/data/sample.musx
+
+      - name: Smoke test Enigma XML
+        run: |
+          node examples/wasm-enigmaxml/test/smoke.mjs \
+            build-wasm/examples/wasm-enigmaxml/denigma_wasm_enigmaxml.js \
+            examples/wasm-mnx/test/data/sample.musx
