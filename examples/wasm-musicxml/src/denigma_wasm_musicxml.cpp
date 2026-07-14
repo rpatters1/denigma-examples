@@ -7,21 +7,21 @@
 #include <exception>
 #include <new>
 #include <optional>
-#include <sstream>
 #include <span>
 #include <string>
+#include <string_view>
 
-#include "denigma/formats/mnx.h"
+#include "denigma/formats/musicxml.h"
 #include "denigma/io/random_access_reader.h"
 
 namespace {
 
-void setOutput(std::uint8_t** outputData, std::size_t* outputSize, std::string payload)
+void setOutput(std::uint8_t** outputData, std::size_t* outputSize, const std::string& payload)
 {
     if (!outputData || !outputSize) {
         return;
     }
-    
+
     auto* buffer = static_cast<std::uint8_t*>(::operator new(payload.size(), std::nothrow));
     if (!buffer) {
         *outputData = nullptr;
@@ -81,7 +81,7 @@ void denigma_free(void* ptr)
     ::operator delete(ptr);
 }
 
-int denigma_musx_to_mnx_json(const std::uint8_t* inputData,
+int denigma_musx_to_musicxml(const std::uint8_t* inputData,
                              std::size_t inputSize,
                              std::uint8_t** outputData,
                              std::size_t* outputSize,
@@ -106,21 +106,33 @@ int denigma_musx_to_mnx_json(const std::uint8_t* inputData,
         auto bytes = std::span<const std::byte>(reinterpret_cast<const std::byte*>(inputData), inputSize);
         denigma::BufferRandomAccessReader reader(bytes);
 
-        denigma::formats::mnx::Options options;
+        denigma::formats::musicxml::Options options;
         options.common.sourceName = "browser.musx";
-        options.indentSpaces = 2;
 
-        std::ostringstream output;
-        denigma::formats::mnx::MusxToMnxJsonConverter converter;
-        // The converter reports failures as error diagnostics on the returned
-        // ConversionResult rather than by throwing, so the result must be checked.
-        auto result = converter.convert(reader, output, options);
+        // The MusicXML converter can emit multiple documents (score plus parts).
+        // With the default options it emits only the score; capture the first document.
+        std::string score;
+        bool haveScore = false;
+        denigma::formats::musicxml::MusxToMusicXmlMultiOutputConverter converter;
+        auto result = converter.convert(reader,
+            [&](std::string_view /*suggestedName*/, std::span<const std::byte> data) {
+                if (!haveScore) {
+                    score.assign(reinterpret_cast<const char*>(data.data()), data.size());
+                    haveScore = true;
+                }
+            },
+            options);
+
         if (result.hasError()) {
             setError(errorMessage, errorText(result));
             return 1;
         }
+        if (!haveScore) {
+            setError(errorMessage, "Conversion produced no MusicXML output.");
+            return 1;
+        }
 
-        setOutput(outputData, outputSize, output.str());
+        setOutput(outputData, outputSize, score);
         if (!outputData || !*outputData) {
             setError(errorMessage, "Unable to allocate output buffer.");
             return 1;

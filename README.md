@@ -8,7 +8,9 @@ SPDX-License-Identifier: MIT
 Standalone examples for consuming Denigma libraries from external projects.
 
 The repository currently includes `examples/wasm-mnx`, which builds a WebAssembly
-wrapper around Denigma's MNX converter target, and `examples/wasm-enigmaxml`,
+wrapper around Denigma's MNX converter target, `examples/wasm-musicxml`, which
+builds a WebAssembly wrapper around Denigma's MusicXML converter target,
+`examples/wasm-enigmaxml`,
 which extracts Finale Enigma XML in WebAssembly, and
 `examples/text-expression-classifier`, which prints classification results for
 each text expression definition in an Enigma XML file using `tinyxml2` for XML
@@ -38,6 +40,14 @@ emcmake cmake -S . -B build-wasm \
 cmake --build build-wasm --target denigma_wasm_mnx
 ```
 
+Build the MusicXML example:
+
+```sh
+emcmake cmake -S . -B build-wasm \
+  -DDENIGMA_EXAMPLES_BUILD_WASM_MUSICXML=ON
+cmake --build build-wasm --target denigma_wasm_musicxml
+```
+
 Build the Enigma XML example:
 
 ```sh
@@ -54,6 +64,14 @@ MNX:
 node examples/wasm-mnx/test/smoke.mjs \
   build-wasm/examples/wasm-mnx/denigma_wasm_mnx.js \
   examples/wasm-mnx/test/data/sample.musx
+```
+
+MusicXML:
+
+```sh
+node examples/wasm-musicxml/test/smoke.mjs \
+  build-wasm/examples/wasm-musicxml/denigma_wasm_musicxml.js \
+  examples/wasm-musicxml/test/data/sample.musx
 ```
 
 Enigma XML:

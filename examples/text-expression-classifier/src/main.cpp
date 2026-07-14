@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "denigma/classify/dynamics.h"
+#include "denigma/classify/expressions.h"
 #include "musx/musx.h"
 
 #define MUSX_USE_TINYXML2
@@ -37,20 +37,28 @@ std::optional<DocumentPtr> loadDocument(const std::string& path)
     }
 }
 
-std::string toString(denigma::classify::Dynamic dynamic)
+std::string toString(denigma::classify::dynamics::Dynamic dynamic)
 {
     const std::string text = denigma::classify::dynamicCanonicalText(dynamic);
     if (!text.empty()) {
         return text;
     }
     switch (dynamic) {
-    case denigma::classify::Dynamic::None:
+    case denigma::classify::dynamics::Dynamic::None:
         return "None";
-    case denigma::classify::Dynamic::Other:
+    case denigma::classify::dynamics::Dynamic::Other:
         return "Other";
     default:
         return "Unknown";
     }
+}
+
+bool hasAdditionalText(const denigma::classify::ExpressionClassification& classification)
+{
+    // In the Dynamics category, text runs that are not recognized dynamics are
+    // classified as Dynamic::Other rather than generic text, so any run beyond
+    // the classified mark indicates additional text.
+    return classification.runs.size() > 1;
 }
 
 std::string readExpressionText(const musx::dom::DocumentPtr& document, const musx::dom::others::TextExpressionDef& def)
@@ -96,12 +104,15 @@ int main(int argc, char** argv)
             continue;
         }
 
-        const auto classification = denigma::classify::classifyDynamic(expression);
+        const auto classification = denigma::classify::classifyExpression(expression);
         const std::string text = readExpressionText(documentPtr, *expression);
 
+        const auto* mark = classification.as<denigma::classify::dynamics::Mark>();
+        const auto dynamic = mark ? mark->dynamic : denigma::classify::dynamics::Dynamic::None;
+
         std::cout << expression->getCmper()
-                  << '\t' << toString(classification.dynamic)
-                  << '\t' << (classification.hasAdditionalText ? "extra" : "plain")
+                  << '\t' << toString(dynamic)
+                  << '\t' << (hasAdditionalText(classification) ? "extra" : "plain")
                   << '\t' << text
                   << '\n';
     }

@@ -62,12 +62,19 @@ jobs:
             -G "${{ matrix.generator }}" \
             -DCMAKE_BUILD_TYPE=Release \
             -DDENIGMA_EXAMPLES_BUILD_WASM_MNX=OFF \
+            -DDENIGMA_EXAMPLES_BUILD_WASM_MUSICXML=OFF \
             -DDENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML=OFF \
             -DDENIGMA_EXAMPLES_BUILD_TEXT_EXPRESSION_CLASSIFIER=ON
 
       - name: Build
         shell: bash
         run: cmake --build build --target text_expression_classifier --parallel 2
+
+      - name: Smoke test classifier
+        shell: bash
+        run: |
+          build/examples/text-expression-classifier/text_expression_classifier \
+            examples/text-expression-classifier/test/data/exps.enigmaxml
 
   wasm:
     name: WASM Ubuntu
@@ -84,9 +91,28 @@ jobs:
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DDENIGMA_EXAMPLES_BUILD_WASM_MNX=ON \
+            -DDENIGMA_EXAMPLES_BUILD_WASM_MUSICXML=ON \
             -DDENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML=ON \
             -DDENIGMA_EXAMPLES_BUILD_TEXT_EXPRESSION_CLASSIFIER=OFF
 
       - name: Build
         shell: bash
-        run: cmake --build build-wasm --target denigma_wasm_mnx denigma_wasm_enigmaxml --parallel 2
+        run: cmake --build build-wasm --target denigma_wasm_mnx denigma_wasm_musicxml denigma_wasm_enigmaxml --parallel 2
+
+      - name: Smoke test MNX
+        run: |
+          node examples/wasm-mnx/test/smoke.mjs \
+            build-wasm/examples/wasm-mnx/denigma_wasm_mnx.js \
+            examples/wasm-mnx/test/data/sample.musx
+
+      - name: Smoke test MusicXML
+        run: |
+          node examples/wasm-musicxml/test/smoke.mjs \
+            build-wasm/examples/wasm-musicxml/denigma_wasm_musicxml.js \
+            examples/wasm-musicxml/test/data/sample.musx
+
+      - name: Smoke test Enigma XML
+        run: |
+          node examples/wasm-enigmaxml/test/smoke.mjs \
+            build-wasm/examples/wasm-enigmaxml/denigma_wasm_enigmaxml.js \
+            examples/wasm-mnx/test/data/sample.musx
