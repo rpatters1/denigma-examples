@@ -43,12 +43,26 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang|GNU")
     add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
 
+if(EMSCRIPTEN)
+    # Emscripten disables exception catching by default, which turns any C++
+    # throw into a fatal abort before try/catch can run. The Denigma converters
+    # use exceptions internally, so enable exception support for all targets,
+    # including FetchContent dependencies.
+    add_compile_options(-fexceptions)
+    add_link_options(-fexceptions)
+endif()
+
 option(DENIGMA_EXAMPLES_BUILD_WASM_MNX "Build the MNX WebAssembly example" ON)
+option(DENIGMA_EXAMPLES_BUILD_WASM_MUSICXML "Build the MusicXML WebAssembly example" ON)
 option(DENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML "Build the Enigma XML WebAssembly example" ON)
 option(DENIGMA_EXAMPLES_BUILD_TEXT_EXPRESSION_CLASSIFIER "Build the TextExpressionDef classification CLI example" ON)
 
 if(DENIGMA_EXAMPLES_BUILD_WASM_MNX)
     add_subdirectory(examples/wasm-mnx)
+endif()
+
+if(DENIGMA_EXAMPLES_BUILD_WASM_MUSICXML)
+    add_subdirectory(examples/wasm-musicxml)
 endif()
 
 if(DENIGMA_EXAMPLES_BUILD_WASM_ENIGMAXML)
