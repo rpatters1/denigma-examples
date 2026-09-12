@@ -3,7 +3,7 @@
 
 include(FetchContent)
 
-set(DENIGMA_GIT_REPOSITORY "https://github.com/rpatters1/denigma.git" CACHE STRING "Denigma git repository used by FetchContent" FORCE)
+set(DENIGMA_GIT_REPOSITORY "https://github.com/openmusx/denigma.git" CACHE STRING "Denigma git repository used by FetchContent" FORCE)
 set(DENIGMA_GIT_TAG "main" CACHE STRING "Denigma git tag, branch, or commit used by FetchContent")
 set(DENIGMA_SOURCE_DIR "" CACHE PATH "Optional local Denigma source checkout; when set, overrides FetchContent download")
 

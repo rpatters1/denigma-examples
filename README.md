@@ -16,8 +16,8 @@ which extracts Finale Enigma XML in WebAssembly, and
 each text expression definition in an Enigma XML file using `tinyxml2` for XML
 parsing.
 
-Denigma documentation is available at [rpatters1.github.io/denigma](https://rpatters1.github.io/denigma/).
-The source repository is [project-attacca/denigma](https://github.com/project-attacca/denigma).
+Denigma documentation is available at [openmusx.github.io/denigma](https://openmusx.github.io/denigma/).
+The source repository is [openmusx/denigma](https://github.com/openmusx/denigma).
 
 ## Requirements
 
